@@ -1,0 +1,70 @@
+# todo: rename your app
+service: sls-web-template
+
+plugins:
+  - serverless-offline
+  - serverless-api-cloudfront
+  - serverless-dotenv-plugin
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: prod
+  region: us-east-1
+  memorySize: 256
+
+custom:
+  logsBucket: sls-web-template-logs
+  apiCloudFront:
+#    todo: uncomment to use a custom domain name
+#    domain: ${env:APP_DOMAIN}
+#    certificate: ${env:APP_DOMAIN_CERT_ARN}
+    compress: true
+    logging:
+      bucket: ${self:custom.logsBucket}.s3.amazonaws.com
+      prefix: cf-logs
+    cookies: none
+#    todo: uncomment to include get parameter into cache key
+#    querystring:
+#      - state
+
+package:
+  exclude:
+    - .idea/**
+    - package-lock.json
+    - package.json
+# todo: Optional. Create lambda layer for your dependencies from file layer-ltemplate/nodejs/package.json
+#    - node_modules/**
+#    - layer-ltemplate/**
+#  excludeDevDependencies: false
+#
+#layers:
+#  ltemplate:
+#    path: layer-ltemplate
+
+functions:
+  webhook:
+    handler: handler.webhook
+    timeout: 10
+    events:
+      - http: POST /abc
+#    todo: uncomment if you use layer "ltemplate"
+#    ltemplate:
+#      - { Ref: LpickdayLambdaLayer }
+
+resources:
+  Resources:
+    S3BucketLogs:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.logsBucket}
+#    todo: uncomment to create a domain record for your app automatically
+#    Route53RecordApp:
+#      Type: AWS::Route53::RecordSet
+#      Properties:
+#        HostedZoneId: ${env:HOSTED_ZONE}
+#        Name: ${env:APP_DOMAIN}.
+#        Type: A
+#        AliasTarget:
+#          HostedZoneId: Z2FDTNDATAQYW2
+#          DNSName: !GetAtt ApiDistribution.DomainName

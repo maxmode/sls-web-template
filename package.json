@@ -1,0 +1,16 @@
+{
+  "name": "sls-web-template",
+  "version": "1.0.0",
+  "main": "handler.js",
+  "dependencies": {
+    "@sentry/serverless": "^6.2.3"
+  },
+  "devDependencies": {
+    "serverless": "^1.83.2",
+    "serverless-api-cloudfront": "^0.9.5",
+    "serverless-dotenv-plugin": "^3.9.0",
+    "serverless-offline": "^5.12.1"
+  },
+  "author": "",
+  "license": "ISC"
+}
